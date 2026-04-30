@@ -26,7 +26,7 @@ def process_file(filepath: str):
         print(f"[-] Error renaming {filepath}: {e}")
 
 def main():
-    parser = argparse.ArgumentParser(description="PyOPL Utility - Phase 1 (Metadata Extraction and Renaming)")
+    parser = argparse.ArgumentParser(description="PyOPL Utility - Metadata Extraction and Renaming")
     parser.add_argument("path", help="Path to a PS2 ISO file or a directory containing ISOs")
     
     args = parser.parse_args()
