@@ -73,6 +73,13 @@ def split_iso(iso_path: str, usb_root: str, game_id: str, name: str, progress_ca
             part_path = os.path.join(usb_root, part_name)
             
             with open(part_path, 'wb') as f_out:
+                # Anti-fragmentation: pre-allocate space
+                try:
+                    part_size = min(CHUNK_SIZE, file_size - (i * CHUNK_SIZE))
+                    os.posix_fallocate(f_out.fileno(), 0, part_size)
+                except (AttributeError, OSError):
+                    pass # Windows or unsupported filesystem
+                    
                 bytes_to_copy = CHUNK_SIZE
                 while bytes_to_copy > 0:
                     read_size = min(bytes_to_copy, 1024 * 1024 * 10)  # Lemos de 10 em 10MB
@@ -80,6 +87,9 @@ def split_iso(iso_path: str, usb_root: str, game_id: str, name: str, progress_ca
                     if not chunk:
                         break
                     f_out.write(chunk)
+                    f_out.flush()
+                    os.fsync(f_out.fileno())  # <--- Isso força o kernel a escrever no USB
+                    
                     bytes_to_copy -= len(chunk)
                     bytes_copied += len(chunk)
                     
@@ -89,3 +99,47 @@ def split_iso(iso_path: str, usb_root: str, game_id: str, name: str, progress_ca
     # Finalizou, atualiza o cfg. ISOs menores que 700MB consideramos CD.
     is_cd = file_size < (700 * 1024 * 1024)
     update_ul_cfg(usb_root, game_id, name, total_parts, is_cd)
+
+def copy_iso_intact(iso_path: str, usb_root: str, game_id: str, name: str, progress_callback=None):
+    """
+    Copia uma ISO inteira (<4GB) para a pasta DVD ou CD no pendrive.
+    Aplica fallocate para evitar fragmentação.
+    """
+    file_size = os.path.getsize(iso_path)
+    
+    # Menor que 700MB vai para pasta CD, senao DVD
+    folder_name = "CD" if file_size < (700 * 1024 * 1024) else "DVD"
+    target_dir = os.path.join(usb_root, folder_name)
+    
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+        
+    # OPL Format: GAME_ID.Name.iso
+    # Se nao tiver name, usa só GAME_ID.iso
+    if name:
+        dest_filename = f"{game_id}.{name}.iso"
+    else:
+        dest_filename = f"{game_id}.iso"
+        
+    dest_path = os.path.join(target_dir, dest_filename)
+    
+    bytes_copied = 0
+    with open(iso_path, 'rb') as f_in:
+        with open(dest_path, 'wb') as f_out:
+            # Anti-fragmentation: pre-allocate space
+            try:
+                os.posix_fallocate(f_out.fileno(), 0, file_size)
+            except (AttributeError, OSError):
+                pass
+                
+            while True:
+                chunk = f_in.read(1024 * 1024 * 10) # 10MB
+                if not chunk:
+                    break
+                f_out.write(chunk)
+                f_out.flush()
+                os.fsync(f_out.fileno())
+                
+                bytes_copied += len(chunk)
+                if progress_callback:
+                    progress_callback(bytes_copied, file_size)

@@ -34,7 +34,6 @@ def get_game_id_from_iso(iso_path: str) -> str:
         return parse_system_cnf(content)
 
     except Exception as e:
-        print(f"Error reading ISO {iso_path}: {e}")
         return None
     finally:
         iso.close()
