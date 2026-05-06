@@ -53,7 +53,7 @@ A premium, fast, and modern desktop utility designed to manage PlayStation 2 gam
 
 ## 📸 Screenshots
 
-*(Screenshots will be added soon!)*
+![PyOPL Utility UI Mockup](screenshots/mockup.png)
 
 ---
 
