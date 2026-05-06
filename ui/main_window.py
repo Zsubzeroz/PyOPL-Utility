@@ -144,7 +144,7 @@ class PyOPLMainWindow(QMainWindow):
         btn_rename.setCursor(Qt.CursorShape.PointingHandCursor)
         
         btn_transfer = QPushButton(" Transferir p/ USB")
-        btn_transfer.setIcon(qta.icon('fa5s.usb', color='white'))
+        btn_transfer.setIcon(qta.icon('fa5b.usb', color='white'))
         btn_transfer.setIconSize(QSize(18, 18))
         btn_transfer.clicked.connect(self.transfer_selected)
         btn_transfer.setStyleSheet("background-color: #1e88e5; padding: 10px; font-weight: bold;")

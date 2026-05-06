@@ -2,10 +2,10 @@ import os
 import re
 
 def rename_iso_for_opl(iso_path: str, game_id: str, custom_name: str = None) -> str:
-    \"\"\"
+    """
     Renames the given ISO file to the OPL format: GAME_ID.Original_Name.iso
     If custom_name is provided, it uses that instead of extracting from original_filename.
-    \"\"\"
+    """
     directory = os.path.dirname(iso_path)
     original_filename = os.path.basename(iso_path)
     
