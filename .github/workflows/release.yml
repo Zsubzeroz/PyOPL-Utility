@@ -1,0 +1,50 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller PyOPL-Utility.spec --clean -y
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/PyOPL-Utility
+          body: |
+            ## PyOPL Utility v2.0.0
+            
+            This release brings a major professional overhaul to the project!
+            
+            ### ✨ Features
+            - **Modern UI**: Dark Amber theme with FontAwesome icons.
+            - **Improved Management**: Better ISO scanning and Game ID extraction.
+            - **Batch Operations**: Robust renaming and cover downloading.
+            - **Splitting**: Automatic handling of ISOs > 4GB for FAT32.
+            
+            ### 🛠️ Installation
+            - Download the binary for Linux.
+            - Or install via source following the README instructions.
+            
+            **Developed with ❤️ by Zsubzeroz**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
