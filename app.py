@@ -1,12 +1,13 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from ui.main_window import PyOPLMainWindow
+from qt_material import apply_stylesheet
 
 def main():
     app = QApplication(sys.argv)
     
-    # Utiliza o estilo Fusion para um visual limpo e consistente no Linux
-    app.setStyle("Fusion")
+    # Aplica o tema dark_amber para um visual gamer/premium
+    apply_stylesheet(app, theme='dark_amber.xml')
     
     window = PyOPLMainWindow()
     window.show()

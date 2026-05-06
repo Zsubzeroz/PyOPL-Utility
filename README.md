@@ -1,72 +1,78 @@
-# PyOPL-Utility 🎮🐧
+# 🎮 PyOPL Utility
 
-[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![UI: PyQt6](https://img.shields.io/badge/UI-PyQt6-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
 
-**PyOPL-Utility** é uma ferramenta nativa para Linux desenvolvida para gerenciar bibliotecas de jogos de PlayStation 2 para o **Open PS2 Loader (OPL)**. Este projeto elimina a necessidade de usar ferramentas legadas de Windows via Wine, oferecendo uma solução robusta para manipulação de ISOs.
-
-## 📂 Estrutura do Projeto
-
-A arquitetura foi desenhada seguindo princípios de modularidade:
-
-*   **`app.py`**: Ponto de entrada da interface gráfica (GUI).
-*   **`cli.py`**: Interface de linha de comando para automação e uso via terminal.
-*   **`core/`**: O "motor" do sistema.
-    *   `iso_handler.py`: Manipulação e leitura de metadados de arquivos ISO.
-    *   `renamer.py`: Lógica de padronização de nomes (GameID.Nome.iso).
-    *   `splitter.py`: Algoritmo de fragmentação de ISOs para sistemas FAT32.
-*   **`ui/`**: Componentes da interface visual em PyQt.
-*   **`test_data/`**: Amostras de ISOs para validação do software.
-*   **`dist/` & `build/`**: Binários gerados para distribuição.
-
-## ✨ Funcionalidades Atuais
-
-- [x] **Suporte Dual:** Use via Interface Gráfica (`app.py`) ou Terminal (`cli.py`).
-- [x] **Extração de Metadados:** Leitura direta do Game ID (ex: SCUS-97481).
-- [x] **Preparado para Build:** Configuração pronta para gerar executáveis nativos via PyInstaller (`.spec`).
-- [x] **Ambiente de Testes:** Scripts inclusos para gerar ISOs falsas e testar a lógica sem precisar de arquivos gigantes.
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-Certifique-se de ter o Python 3.10+ instalado.
-
-### Instalação
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/PyOPL-Utility.git
-cd PyOPL-Utility
-
-# Ative o ambiente virtual
-source venv/bin/activate
-
-# Instale as dependências
-pip install -r requirements.txt
-```
-
-### Execução
-Para abrir a interface gráfica:
-```bash
-python3 app.py
-```
-
-Para usar via terminal:
-```bash
-python3 cli.py --help
-```
-
-## 🛠️ Desenvolvimento e Testes
-
-Para garantir a confiabilidade, o projeto conta com um gerador de ISOs de teste:
-```bash
-python3 test_fake_iso.py
-```
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+A premium, fast, and modern desktop utility designed to manage PlayStation 2 games for Open PS2 Loader (OPL). Easily transfer your ISOs to USB drives, automatically rename them to the OPL standard, and download high-quality cover art.
 
 ---
 
-### 👨‍💻 Nota do Desenvolvedor
-Este projeto faz parte do meu estudo em **Engenharia de Software**, focando em manipulação de sistemas de arquivos, design de interfaces e arquitetura de software modular.
+## ✨ Features
+
+- **🚀 Ultra-Fast Transfer**: Direct copy for ISOs < 4GB and automatic splitting for ISOs > 4GB.
+- **🧩 OPL Compatibility**: Automatically generates `ul.cfg` for split games and follows the `GAME_ID.Name.iso` naming convention.
+- **🖼️ Auto-Cover Downloader**: One-click download for high-quality PS2 covers from the [xlenore/ps2-covers](https://github.com/xlenore/ps2-covers) repository.
+- **🔍 Intelligent Scanning**: Automatically extracts Game IDs (e.g., SLUS_210.66) directly from the ISO files.
+- **💾 USB Detection**: Auto-detects connected USB drives and checks for available space.
+- **🎨 Modern UI**: Beautiful "Dark Amber" theme powered by `qt-material` and professional icons by `FontAwesome`.
+
+---
+
+## 🛠️ Installation
+
+### Prerequisites
+- Python 3.8 or higher
+- `pip` (Python package manager)
+
+### Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Zsubzeroz/PyOPL-Utility.git
+   cd PyOPL-Utility
+   ```
+2. Create a virtual environment and install dependencies:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+
+---
+
+## 🚀 How to Use
+
+1. **Launch the app**: `python app.py`
+2. **Select Folder**: Click "Selecionar Pasta" and point to where your PS2 ISOs are stored.
+3. **Scan**: Click "Atualizar" to list the games and extract their IDs.
+4. **Rename (Optional)**: Select games and click "Renomear p/ OPL" to format filenames correctly.
+5. **Transfer**: Select a game and click "Transferir p/ USB". Select your USB drive root.
+6. **Download Covers**: Select games and click "Baixar Capas" to fetch artwork to the `ART` folder on your USB.
+
+---
+
+## 📸 Screenshots
+
+*(Screenshots will be added soon!)*
+
+---
+
+## 📝 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## 🤝 Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+**Developed with ❤️ by [Luan Estifer (Zsubzeroz)](https://github.com/Zsubzeroz)**

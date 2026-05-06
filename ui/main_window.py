@@ -1,11 +1,11 @@
 import os
+import qtawesome as qta
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, 
-    QFileDialog, QLabel, QMessageBox, QAbstractItemView
+    QFileDialog, QLabel, QMessageBox, QAbstractItemView, QFrame
 )
-from PyQt6.QtCore import Qt
-
+from PyQt6.QtCore import Qt, QSize
 from core.splitter import split_iso, copy_iso_intact
 from core.iso_handler import get_game_id_from_iso
 from core.renamer import rename_iso_for_opl
@@ -68,8 +68,8 @@ class TransferWorker(QThread):
 class PyOPLMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PyOPL Utility")
-        self.resize(950, 600)
+        self.setWindowTitle("PyOPL Utility - PS2 USB Manager")
+        self.setMinimumSize(1000, 700)
         
         self.current_directory = ""
         self.iso_files = []
@@ -80,27 +80,40 @@ class PyOPLMainWindow(QMainWindow):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
+        main_layout.setContentsMargins(20, 20, 20, 10)
+        main_layout.setSpacing(15)
         
         # --- Top bar ---
-        top_layout = QHBoxLayout()
-        self.dir_label = QLabel("Diretório: Nenhum selecionado")
-        self.dir_label.setStyleSheet("font-weight: bold; font-size: 14px;")
+        top_frame = QFrame()
+        top_frame.setObjectName("TopBar")
+        top_layout = QHBoxLayout(top_frame)
+        top_layout.setContentsMargins(0, 0, 0, 0)
         
-        btn_browse = QPushButton("Procurar Pasta...")
+        self.dir_label = QLabel("Nenhuma pasta selecionada")
+        self.dir_label.setStyleSheet("font-size: 15px; color: #ffb300;")
+        
+        btn_browse = QPushButton(" Selecionar Pasta")
+        btn_browse.setIcon(qta.icon('fa5s.folder-open', color='#ffb300'))
+        btn_browse.setIconSize(QSize(20, 20))
         btn_browse.clicked.connect(self.browse_directory)
-        btn_scan = QPushButton("Analisar Pasta Atual")
+        btn_browse.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        btn_scan = QPushButton(" Atualizar")
+        btn_scan.setIcon(qta.icon('fa5s.sync-alt', color='#ffffff'))
+        btn_scan.setIconSize(QSize(18, 18))
         btn_scan.clicked.connect(self.scan_directory)
+        btn_scan.setCursor(Qt.CursorShape.PointingHandCursor)
         
         top_layout.addWidget(self.dir_label, stretch=1)
         top_layout.addWidget(btn_browse)
         top_layout.addWidget(btn_scan)
         
-        main_layout.addLayout(top_layout)
+        main_layout.addWidget(top_frame)
         
         # --- Table ---
         self.table = QTableWidget(0, 5)
         self.table.setHorizontalHeaderLabels([
-            "Arquivo Original", "Game ID", "Nome Limpo", "Tamanho (GB)", "Status"
+            "ISO Original", "Game ID", "Título no OPL", "Tamanho", "Estado"
         ])
         
         header = self.table.horizontalHeader()
@@ -113,33 +126,55 @@ class PyOPLMainWindow(QMainWindow):
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.DoubleClicked | QAbstractItemView.EditTrigger.EditKeyPressed)
         self.table.setAlternatingRowColors(True)
+        self.table.setGridStyle(Qt.PenStyle.NoPen)
+        self.table.setStyleSheet("QTableWidget { border: 1px solid #333; border-radius: 5px; }")
         
         main_layout.addWidget(self.table)
         
         # --- Bottom bar ---
-        bottom_layout = QHBoxLayout()
-        btn_rename = QPushButton("Renomear Selecionados (OPL)")
+        actions_frame = QFrame()
+        bottom_layout = QHBoxLayout(actions_frame)
+        bottom_layout.setContentsMargins(0, 5, 0, 0)
+        
+        btn_rename = QPushButton(" Renomear p/ OPL")
+        btn_rename.setIcon(qta.icon('fa5s.edit', color='white'))
+        btn_rename.setIconSize(QSize(18, 18))
         btn_rename.clicked.connect(self.rename_selected)
-        btn_rename.setStyleSheet("background-color: #2e7d32; color: white; font-weight: bold;")
+        btn_rename.setStyleSheet("background-color: #43a047; padding: 10px; font-weight: bold;")
+        btn_rename.setCursor(Qt.CursorShape.PointingHandCursor)
         
-        btn_transfer = QPushButton("Transferir Selecionado (USB)")
+        btn_transfer = QPushButton(" Transferir p/ USB")
+        btn_transfer.setIcon(qta.icon('fa5s.usb', color='white'))
+        btn_transfer.setIconSize(QSize(18, 18))
         btn_transfer.clicked.connect(self.transfer_selected)
-        btn_transfer.setStyleSheet("background-color: #0277bd; color: white; font-weight: bold;")
+        btn_transfer.setStyleSheet("background-color: #1e88e5; padding: 10px; font-weight: bold;")
+        btn_transfer.setCursor(Qt.CursorShape.PointingHandCursor)
         
-        self.btn_art = QPushButton("Baixar Capas")
+        self.btn_art = QPushButton(" Baixar Capas")
+        self.btn_art.setIcon(qta.icon('fa5s.image', color='white'))
+        self.btn_art.setIconSize(QSize(18, 18))
         self.btn_art.clicked.connect(self.download_arts_selected)
-        self.btn_art.setStyleSheet("background-color: #f57c00; color: white; font-weight: bold;")
+        self.btn_art.setStyleSheet("background-color: #fb8c00; padding: 10px; font-weight: bold;")
+        self.btn_art.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        btn_clear = QPushButton(" Limpar Tabela")
+        btn_clear.setIcon(qta.icon('fa5s.trash-alt', color='white'))
+        btn_clear.setIconSize(QSize(18, 18))
+        btn_clear.clicked.connect(lambda: self.table.setRowCount(0))
+        btn_clear.setStyleSheet("padding: 10px;")
+        btn_clear.setCursor(Qt.CursorShape.PointingHandCursor)
         
         bottom_layout.addWidget(btn_rename)
+        bottom_layout.addWidget(btn_clear)
         bottom_layout.addStretch()
-        bottom_layout.addWidget(btn_transfer)
         bottom_layout.addWidget(self.btn_art)
+        bottom_layout.addWidget(btn_transfer)
         
-        main_layout.addLayout(bottom_layout)
+        main_layout.addWidget(actions_frame)
         
         # --- Signature ---
-        footer_label = QLabel("Software de Uso Livre | Idealizado e disponibilizado por Luan Estifer R. Pereira (Zsubzeroz)")
-        footer_label.setStyleSheet("color: gray; font-style: italic; font-size: 11px; margin-top: 5px;")
+        footer_label = QLabel("PyOPL Utility v2.0 | By Luan Estifer (Zsubzeroz)")
+        footer_label.setStyleSheet("color: #666; font-size: 11px; margin-top: 10px;")
         footer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(footer_label)
         

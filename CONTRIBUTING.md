@@ -23,7 +23,7 @@ Se você quer colocar a mão na massa:
    - Para bugs: `git checkout -b fix/nome-do-bug`
    - Para novas funcionalidades: `git checkout -b feature/nome-da-feature`
 3. Faça suas alterações seguindo os padrões de código (veja abaixo).
-4. **Teste seu código!** Use o script `test_fake_iso.py` para garantir que a lógica principal não foi quebrada.
+4. **Teste seu código!** Garanta que a lógica principal não foi quebrada.
 5. Envie um **Pull Request** descrevendo detalhadamente o que você mudou.
 
 ## 🛠️ Padrões de Código
@@ -39,12 +39,7 @@ Para manter o projeto organizado, seguimos estas diretrizes:
 
 ## 🧪 Testes
 
-Antes de enviar um código que altere a forma como as ISOs são lidas ou divididas, execute:
-```bash
-python3 test_fake_iso.py
-```
-
-Se o seu código adicionar uma nova funcionalidade, considere criar um novo script de teste na pasta `test_data/`.
+Antes de enviar um código que altere a forma como as ISOs são lidas ou divididas, certifique-se de testar com ISOs reais ou mocks controlados. Se o seu código adicionar uma nova funcionalidade, considere adicionar documentação de como testá-la.
 
 ## 💬 Comunicação
 
